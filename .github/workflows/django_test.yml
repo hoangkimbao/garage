@@ -1,4 +1,4 @@
-name: Django CI/CD Test
+name: Django CI/CD Test & Deploy
 
 on:
   push:
@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8, 3.9]
+        python-version: [3.9, 3.10] # Cập nhật phiên bản Python
 
     steps:
     - uses: actions/checkout@v2
@@ -24,3 +24,38 @@ jobs:
     - name: Run Tests
       run: |
         python manage.py test
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build # Chỉ chạy sau khi 'build' thành công
+    if: github.ref == 'refs/heads/main' # Chỉ chạy khi push lên nhánh main
+
+    steps:
+      - name: Deploy to PythonAnywhere
+        uses: appleboy/ssh-action@master
+        with:
+          host: ssh.pythonanywhere.com
+          username: ${{ secrets.PA_SSH_USERNAME }}
+          password: ${{ secrets.PA_SSH_PASSWORD }}
+          port: 22
+          script: |
+            # Di chuyển đến thư mục project
+            cd ${{ secrets.PA_PROJECT_PATH }}
+
+            # Kéo code mới nhất từ nhánh main
+            git pull origin main
+
+            # Kích hoạt môi trường ảo
+            source ${{ secrets.PA_VENV_PATH }}/bin/activate
+
+            # Cài đặt các thư viện
+            pip install -r requirements.txt
+
+            # Chạy migrate
+            python manage.py migrate
+
+            # Thu thập file tĩnh
+            python manage.py collectstatic --noinput
+
+            # Tải lại web app bằng cách "chạm" vào file wsgi
+            touch ${{ secrets.PA_WSGI_FILE_PATH }}
