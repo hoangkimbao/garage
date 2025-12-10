@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+
+    <h2 class="mb-4">Kết quả tìm kiếm cho: "<strong>{{ query }}</strong>"</h2>
+
+    {% if services_results %}
+        <h3 class="mt-4 text-primary">Dịch Vụ Tìm Thấy</h3>
+        <div class="row">
+            {% for sv in services_results %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ sv.name }}</h5>
+                        <p class="card-text">{{ sv.description|truncatewords:15 }}</p>
+                        <a href="#" class="btn btn-sm btn-outline-primary">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if parts_results %}
+        <h3 class="mt-4 text-primary">Phụ Tùng Tìm Thấy</h3>
+        <div class="row">
+            {% for part in parts_results %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    {% if part.image %}
+                        <img src="{{ part.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                        <img src="https://via.placeholder.com/300x200" class="card-img-top">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ part.name }}</h5>
+                        <p class="text-muted">Mã: {{ part.part_number }}</p>
+                        <p class="fw-bold text-danger">
+                            {% if part.price %}{{ part.price|floatformat:0 }} VNĐ{% else %}Liên hệ{% endif %}
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="btn btn-primary w-100">Đặt Mua</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if not services_results and not parts_results %}
+        <div class="alert alert-warning mt-4">
+            Không tìm thấy kết quả nào phù hợp với từ khóa của bạn.
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

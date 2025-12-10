@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="fw-bold mb-4">Tổng Quan Doanh Thu</h2>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card text-center shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    Doanh Thu Bán Phụ Tùng
+                </div>
+                <div class="card-body">
+                    <p class="card-text display-5 fw-bold text-primary">{{ parts_revenue|floatformat:0 }}₫</p>
+                </div>
+                <div class="card-footer text-muted small">
+                    (Dựa trên các đơn hàng đã thanh toán)
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card text-center shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    Doanh Thu Dịch Vụ
+                </div>
+                <div class="card-body">
+                    <p class="card-text display-5 fw-bold text-success">{{ services_revenue|floatformat:0 }}₫</p>
+                </div>
+                <div class="card-footer text-muted small">
+                    (Dựa trên các lịch hẹn đã hoàn thành)
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card text-center shadow-sm h-100 bg-light">
+                <div class="card-header bg-dark text-white">
+                    Tổng Doanh Thu
+                </div>
+                <div class="card-body">
+                    <p class="card-text display-5 fw-bold text-dark">{{ total_revenue|floatformat:0 }}₫</p>
+                </div>
+                 <div class="card-footer text-muted small">
+                    (Tổng cộng)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 p-4 bg-light rounded">
+        <h4 class="text-muted">Ghi chú</h4>
+        <p>Các số liệu trên được tính toán dựa trên dữ liệu hiện có trong hệ thống và chỉ mang tính tham khảo. Chức năng lọc theo ngày và biểu đồ sẽ được phát triển trong tương lai.</p>
+    </div>
+
+</div>
+{% endblock %}
