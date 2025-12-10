@@ -1,0 +1,39 @@
+# This file tells Render how to build and run your services.
+# See https://render.com/docs/yaml-spec for details.
+
+services:
+  # A PostgreSQL database
+  - name: garage-db
+    type: psql
+    # Plan: 'free' is free, but has limitations.
+    # See https://render.com/docs/databases#free-postgresql-instances
+    plan: free
+    psqlVersion: "15" # Specify the PostgreSQL version
+
+  # The Django web service
+  - name: garage-web
+    type: web
+    env: python
+    # Tell Render to use Python 3.10, matching your project
+    pythonVersion: "3.10"
+    # Link to the database we just defined
+    database:
+      name: garage-db
+      property: connectionString # This sets the DATABASE_URL env var
+    # Build commands to run on every deploy
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      python manage.py collectstatic --no-input
+      python manage.py migrate
+    # Command to start the web server
+    startCommand: "gunicorn first_project.wsgi"
+    # Health check to ensure the service is running
+    healthCheckPath: /
+    envVars:
+      - key: SECRET_KEY
+        # This will use the SECRET_KEY from your Render environment group or service settings
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        # Number of Gunicorn workers to spin up
+        value: 4
